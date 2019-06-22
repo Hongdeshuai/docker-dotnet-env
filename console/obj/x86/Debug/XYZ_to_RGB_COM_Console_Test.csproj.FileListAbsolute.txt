@@ -1,0 +1,3 @@
+G:\Docker-works\Container-COM POC-REV2\XYZ_to_RGB_COM_Console_Test\obj\x86\Debug\Interop.DATACOLOR_COLORITE_XYZ_TO_RGBLib.dll
+G:\Docker-works\Container-COM POC-REV2\XYZ_to_RGB_COM_Console_Test\obj\x86\Debug\XYZ_to_RGB_COM_Console_Test.csproj.ResolveComReference.cache
+G:\Docker-works\Container-COM POC-REV2\XYZ_to_RGB_COM_Console_Test\obj\x86\Debug\XYZ_to_RGB_COM_Console_Test.csproj.CoreCompileInputs.cache

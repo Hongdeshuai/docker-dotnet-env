@@ -1,0 +1,37 @@
+# escape=`
+
+
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8 AS build
+WORKDIR /app
+COPY settings.reg .
+COPY setup.msi .
+COPY ngut.ps1 .
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+RUN regedit /i /s settings.reg `
+    .\setup.msi -WAIT `
+   ` c:\Windows\SysWOW64\regsvr32.exe /s 'C:\Program Files (x86)\Datacolor\Common Files\Datacolor Envision XYZ to RGB\Datacolor_ENVISION_XYZ_to_RGB.dll' -WAIT
+
+
+
+# copy csproj and restore as distinct layers
+COPY *.sln .
+COPY xyz.net/*.csproj ./xyz.net/
+COPY xyz.net/*.config ./xyz.net/
+RUN nuget restore
+
+# copy everything else and build app
+COPY xyz.net/. ./xyz.net/
+WORKDIR /app/xyz.net
+RUN msbuild /p:Configuration=Release
+
+
+FROM microsoft/dotnet-framework:4.7.2-runtime-windowsservercore-ltsc2019
+WORKDIR /inetpub/wwwroot
+COPY settings.reg .
+COPY setup.msi .
+COPY ngut.ps1 .
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+RUN regedit /i /s settings.reg `
+    Start-Process 'setup.msi' '/qn' -PassThru `
+    c:\Windows\SysWOW64\regsvr32.exe /s 'C:\Program Files (x86)\Datacolor\Common Files\Datacolor Envision XYZ to RGB\Datacolor_ENVISION_XYZ_to_RGB.dll' -WAIT
+COPY --from=build /app/xyz.net/. ./

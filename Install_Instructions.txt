@@ -1,0 +1,22 @@
+-------------------------------------------------------------------
+to test C# Project on development system make sure to do the following (all steps should be done with Admin privledges):
+1. Run settings.reg
+2. Run Setup.exe
+3. Register Datacolor_ENVISION_XYZ_to_RGB.dll
+4. Build xzy.net.sln
+5. Navigate to http://localhost:1738/api/values/1,2,3 to make sure this Web API works locally
+
+-------------------------------------------------------------------
+//Dockerfile instructions steps to create Docker Image
+//Copy dependency files (.reg, setup.exe)
+//Call from Dockerfile after copying .reg file
+Invoke-Command -ScriptBlock {regedit /i /s C:\shared\settings.reg}
+//Creates 3 string values in Registry Key: Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\DATACOLOR
+
+//Run Envision setup silently and wait until complete
+start /WAIT setup.exe /s /w /v/qn
+
+//Register the COM dll - DLL files will be installed to C:\Program Files (x86)\Datacolor\Common Files\Datacolor Envision XYZ to RGB
+regsvr32 Datacolor_ENVISION_XYZ_to_RGB.dll
+
+//Copy C# source file over and build
